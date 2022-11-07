@@ -3,7 +3,7 @@ resource "aws_security_group" "alb" {
   vpc_id = module.vpc.vpc_id
 }
 
-resource "aws_security_group_rule" "tcp_alb" {
+resource "aws_security_group_rule" "tcp_ingress_alb" {
     type = "ingress"
     from_port = 8000
     to_port = 8000
@@ -12,7 +12,7 @@ resource "aws_security_group_rule" "tcp_alb" {
     security_group_id = aws_security_group.alb.id
 }
 
-resource "aws_security_group_rule" "tcp_alb" {
+resource "aws_security_group_rule" "tcp_egress_alb" {
     type = "egress"
     from_port = 0
     to_port = 0
