@@ -1,5 +1,5 @@
 resource "aws_security_group" "alb" {
-  name = "alb-ecs"
+  name = "${var.project}-${var.environment}-alb"
   vpc_id = module.vpc.vpc_id
 }
 
