@@ -1,11 +1,11 @@
 resource "aws_lb" "ecs_alb" {
-  name = "ecs-${var.environment}"
+  name = "${var.project}-lb-${var.environment}"
   security_groups = [aws_security_group.alb.id]
   subnets = module.vpc.public_subnets
 }
 
 resource "aws_lb_target_group" "ecs_alb_tg" {
-  name = "ecs-tg-${var.environment}"
+  name = "${var.project}-lb-tg-${var.environment}"
   port = 8000
   protocol = "HTTP"
   target_type = "ip"

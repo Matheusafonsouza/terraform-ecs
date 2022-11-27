@@ -1,10 +1,10 @@
 module "ecs" {
   source = "terraform-aws-modules/ecs/aws"
-  cluster_name = "ecs-${var.environment}"
+  cluster_name = "${var.project}-${var.environment}"
 }
 
 resource "aws_ecs_task_definition" "task" {
-  family = "task"
+  family = "${var.project}-${var.environment}"
   requires_compatibilities = [ "FARGATE" ]
   network_mode = "awsvpc"
   cpu = 256
@@ -13,9 +13,8 @@ resource "aws_ecs_task_definition" "task" {
 
   container_definitions = jsonencode([
     {
-      name = "${var.repository_name}-${var.environment}"
-      # image = "${aws_ecr_repository.repository.repository_url}:latest"
-      image = "384775792797.dkr.ecr.us-east-1.amazonaws.com/ecs-production:v0.0.2"
+      name = "${var.project}-${var.environment}"
+      image = "${aws_ecr_repository.repository.repository_url}:latest"
       cpu = 256
       memory = 512
       essential = true
@@ -30,14 +29,14 @@ resource "aws_ecs_task_definition" "task" {
 }
 
 resource "aws_ecs_service" "service" {
-  name = var.repository_name
+  name = "${var.project}-${var.environment}"
   cluster = module.ecs.cluster_id
   task_definition = aws_ecs_task_definition.task.arn
   desired_count = 3
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_alb_tg.arn
-    container_name = "${var.repository_name}-${var.environment}"
+    container_name = "${var.project}-${var.environment}"
     container_port = 8000
   }
 

@@ -1,4 +1,4 @@
-variable "repository_name" {
+variable "project" {
   type = string
 }
 
