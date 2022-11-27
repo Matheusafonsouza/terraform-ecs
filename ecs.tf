@@ -6,22 +6,22 @@ module "ecs" {
 resource "aws_ecs_task_definition" "task" {
   family = "${var.project}-${var.environment}"
   requires_compatibilities = [ "FARGATE" ]
-  network_mode = "awsvpc"
-  cpu = 256
-  memory = 512
+  network_mode = local.ecs_network_mode
+  cpu = local.ecs_task_cpu
+  memory = local.ecs_task_memory
   execution_role_arn = aws_iam_role.ecs_role.arn
 
   container_definitions = jsonencode([
     {
-      name = "${var.project}-${var.environment}"
-      image = "${aws_ecr_repository.repository.repository_url}:latest"
-      cpu = 256
-      memory = 512
+      name = local.ecs_task_container_name
+      image = local.ecs_task_image
+      cpu = local.ecs_task_cpu
+      memory = local.ecs_task_memory
       essential = true
       portMappings = [
         {
-          containerPort = 8000
-          hostPort = 8000
+          containerPort = local.application_port
+          hostPort = local.application_port
         }
       ]
     }
@@ -36,8 +36,8 @@ resource "aws_ecs_service" "service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_alb_tg.arn
-    container_name = "${var.project}-${var.environment}"
-    container_port = 8000
+    container_name = local.ecs_task_container_name
+    container_port = local.application_port
   }
 
   network_configuration {
