@@ -14,11 +14,12 @@ resource "aws_ecs_task_definition" "task" {
   container_definitions = jsonencode([
     {
       name = "${var.repository_name}-${var.environment}"
-      image = "${aws_ecr_repository.repository.arn}:latest"
+      # image = "${aws_ecr_repository.repository.repository_url}:latest"
+      image = "384775792797.dkr.ecr.us-east-1.amazonaws.com/ecs-production:v0.0.2"
       cpu = 256
       memory = 512
       essential = true
-      portMapings = [
+      portMappings = [
         {
           containerPort = 8000
           hostPort = 8000
@@ -40,5 +41,13 @@ resource "aws_ecs_service" "service" {
     container_port = 8000
   }
 
+  network_configuration {
+    subnets = module.vpc.private_subnets
+    security_groups = [aws_security_group.private.id]
+  }
 
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE"
+    weight = 1
+  }
 }
