@@ -18,6 +18,7 @@ resource "aws_ecs_task_definition" "task" {
       cpu       = local.ecs_task_cpu
       memory    = local.ecs_task_memory
       essential = true
+      secrets   = [for key in keys(local.ssm) : { "name" : key, "valueFrom" : aws_ssm_parameter.ssm[key].arn }]
       portMappings = [
         {
           containerPort = local.application_port

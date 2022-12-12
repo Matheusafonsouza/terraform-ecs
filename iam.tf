@@ -34,6 +34,8 @@ resource "aws_iam_role_policy" "ecs_policy" {
           "ecr:BatchGetImage",
           "logs:CreateLogStream",
           "logs:PutLogEvents",
+          "ssm:GetParameters",
+          "ssm:GetParameter"
         ]
         Effect   = "Allow"
         Resource = "*"
